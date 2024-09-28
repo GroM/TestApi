@@ -1,0 +1,24 @@
+.gitattributes
+
+bin/
+obj/
+
+# User-specific files
+*.suo
+*.user
+
+# ReSharper is a .NET coding add-in
+_ReSharper*/
+*.[Rr]e[Ss]harper
+
+# VS solution folder
+.vs/
+
+# IntelliJ folders
+.idea/
+<<<<<<< HEAD
+.settings/
+=======
+.settings/
+/BackendAssignment/_README/Instructions.txt
+>>>>>>> Add project files.
