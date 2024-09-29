@@ -1,6 +1,6 @@
 using System;
 
-namespace CleoAssignment.ApiService;
+namespace CS.ApiService;
 
 public class ThrottleSettings
 {
@@ -23,5 +23,6 @@ public class ThrottleSettings
     /// <summary>
     /// Time from which the first ThrottleInterval starts.
     /// </summary>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Base Code>")]
     public DateTime IntervalRootUtc => DateTime.UnixEpoch;
 }

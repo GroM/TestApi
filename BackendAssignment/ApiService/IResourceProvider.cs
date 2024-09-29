@@ -1,4 +1,4 @@
-﻿namespace CleoAssignment.ApiService;
+﻿namespace CS.ApiService;
 
 public interface IResourceProvider<T>
 {

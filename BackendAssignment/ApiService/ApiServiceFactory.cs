@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CleoAssignment.ApiService;
+namespace CS.ApiService;
 
 public static class ApiServiceFactory
 {
