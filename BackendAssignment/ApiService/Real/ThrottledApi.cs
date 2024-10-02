@@ -65,12 +65,12 @@ namespace CS.ApiService.Real
 
         #region Throttle related
         private readonly ConcurrentDictionary<string, uint> throttleCounters = [];
-        private DateTime throttlePeriodEnds = DateTime.MinValue;
+        private DateTime nextThrottlePeriodStart = DateTime.MinValue;
         private readonly ConcurrentDictionary<string, DateTime> throttleBans = [];
         private void ResetThrottleData()
         {
             throttleCounters.Clear();
-            throttlePeriodEnds = ComputeThisPeriodEnd();
+            nextThrottlePeriodStart = ComputeThisPeriodEnd();
         }
 
         private bool CanExecute(string clientIdentifier)
@@ -91,7 +91,7 @@ namespace CS.ApiService.Real
              * 1) if there was no ITimerProvider, then clearing could be done at specific intervals - reset every ThrottleInterval
              * 2) below, when counter should be increased check if current time exceeds when throttle period should end, if yes, start new period
              **/
-            if (TimeProvider.UtcNow > throttlePeriodEnds)
+            if (TimeProvider.UtcNow >= nextThrottlePeriodStart)
             {
                 ResetThrottleData();
             }

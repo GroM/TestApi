@@ -28,16 +28,13 @@ public class EdgeCasesUnitTests
     public async Task CachingWorks_AfterUpdate()
     {
         var timeProvider = new ManualTimeProvider { UtcNow = DateTime.UnixEpoch };
-
         var resourceCallCounter = 0;
-
         var resourceProvider = new InjectedResourceProvider<int>(_ =>
         {
             Interlocked.Increment(ref resourceCallCounter);
             return 1;
         },
                                                                  (_, _) => { });
-
         var throttleSettings = DefaultThrottleSettings;
 
         var apiService = ApiServiceFactory.CreateApiService(throttleSettings, resourceProvider, timeProvider);
@@ -53,6 +50,27 @@ public class EdgeCasesUnitTests
         Assert.True(r5.Success);
 
         Assert.Equal(2, resourceCallCounter);
+    }
+
+    [Fact]
+    public async Task Throthling_StrictTimeValuation()
+    {
+        var timeProvider = new ManualTimeProvider { UtcNow = DateTime.UnixEpoch };
+        var resourceProvider = new InjectedResourceProvider<int>(_ => 1, (_, _) => { });
+        var throttleSettings = DefaultThrottleSettings;
+
+        var apiService = ApiServiceFactory.CreateApiService(throttleSettings, resourceProvider, timeProvider);
+        var r1 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r1.Success);
+        var r2 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r2.Success);
+        timeProvider.UtcNow += throttleSettings.ThrottleInterval;
+        var r3 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r3.Success);
+        var r4 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r4.Success);
+        var r5 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.False(r5.Success);
     }
 
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
