@@ -2,7 +2,7 @@ using System;
 
 namespace CS.ApiService;
 
-public class ThrottleSettings
+public record ThrottleSettings
 {
     /// <summary>
     /// The interval over which the MaxRequests are tracked and periodically reset.

@@ -6,7 +6,7 @@ using Xunit;
 
 namespace CS.Tests;
 
-public class IncludedBasicUnitTests
+public class IncludedBasicBetterUnitTests
 {
     [Fact]
     public async Task ThrottlingWorksFor_SameIpGetsBanned()
@@ -18,9 +18,14 @@ public class IncludedBasicUnitTests
 
         var apiService = ApiServiceFactory.CreateApiService(throttleSettings, resourceProvider, timeProvider);
 
-        Assert.True((await apiService.GetResource(new("127.0.0.1", "id1"))).Success);
-        Assert.Equal(1, (await apiService.GetResource(new("127.0.0.1", "id1"))).ResourceData);
-        Assert.False((await apiService.GetResource(new("127.0.0.1", "id1"))).Success);
+        var r1 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r1.Success);
+        Assert.Equal(1, r1.ResourceData);
+        var r2 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r2.Success);
+        Assert.Equal(1, r2.ResourceData);
+        var r3 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.False(r3.Success);
     }
 
     [Fact]
@@ -33,18 +38,28 @@ public class IncludedBasicUnitTests
 
         var apiService = ApiServiceFactory.CreateApiService(throttleSettings, resourceProvider, timeProvider);
 
-        Assert.True((await apiService.GetResource(new("127.0.0.1", "id1"))).Success);
-        Assert.Equal(1, (await apiService.GetResource(new("127.0.0.1", "id2"))).ResourceData);
+        var r1 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r1.Success);
+        Assert.Equal(1, r1.ResourceData);
+        var r2 = await apiService.GetResource(new("127.0.0.1", "id2"));
+        Assert.True(r2.Success);
+        Assert.Equal(1, r2.ResourceData);
 
         timeProvider.UtcNow += TimeSpan.FromSeconds(30);
 
-        Assert.True((await apiService.GetResource(new("127.0.0.1", "id1"))).Success);
-        Assert.True((await apiService.GetResource(new("127.0.0.1", "id2"))).Success);
-        Assert.False((await apiService.GetResource(new("127.0.0.1", "id3"))).Success);
+        r1 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r1.Success);
+        Assert.Equal(1, r1.ResourceData);
+        r2 = await apiService.GetResource(new("127.0.0.1", "id2"));
+        Assert.True(r2.Success);
+        Assert.Equal(1, r2.ResourceData);
+        var r3 = await apiService.GetResource(new("127.0.0.1", "id3"));
+        Assert.False(r3.Success);
 
         timeProvider.UtcNow += throttleSettings.BanTimeOut;
-
-        Assert.True((await apiService.GetResource(new("127.0.0.1", "id1"))).Success);
+        r1 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r1.Success);
+        Assert.Equal(1, r1.ResourceData);
     }
 
     [Fact]
@@ -56,11 +71,14 @@ public class IncludedBasicUnitTests
         var throttleSettings = DefaultThrottleSettings;
 
         var apiService = ApiServiceFactory.CreateApiService(throttleSettings, resourceProvider, timeProvider);
-
-        Assert.True((await apiService.GetResource(new("127.0.0.1", "id1"))).Success);
-        Assert.True((await apiService.GetResource(new("127.0.0.1", "id1"))).Success);
-        Assert.True((await apiService.GetResource(new("127.0.0.2", "id1"))).Success);
-        Assert.True((await apiService.GetResource(new("127.0.0.2", "id1"))).Success);
+        var r11 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r11.Success);
+        var r12 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r12.Success);
+        var r21 = await apiService.GetResource(new("127.0.0.2", "id1"));
+        Assert.True(r21.Success);
+        var r22 = await apiService.GetResource(new("127.0.0.2", "id1"));
+        Assert.True(r22.Success);
     }
 
     [Fact]
@@ -81,9 +99,10 @@ public class IncludedBasicUnitTests
         var throttleSettings = DefaultThrottleSettings;
 
         var apiService = ApiServiceFactory.CreateApiService(throttleSettings, resourceProvider, timeProvider);
-
-        Assert.True((await apiService.GetResource(new("127.0.0.1", "id1"))).Success);
-        Assert.True((await apiService.GetResource(new("127.0.0.2", "id1"))).Success);
+        var r1 = await apiService.GetResource(new("127.0.0.1", "id1"));
+        Assert.True(r1.Success);
+        var r2 = await apiService.GetResource(new("127.0.0.2", "id1"));
+        Assert.True(r2.Success);
         Assert.Equal(1, resourceCallCounter);
     }
 
