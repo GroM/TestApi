@@ -156,8 +156,7 @@ namespace CS.ApiService.Real
                 try
                 {
                     resourceProvider.AddOrUpdateResource(request.ResourceId, request.Resource);
-                    Lazy<T> oldValue;
-                    cache.TryRemove(request.ResourceId, out oldValue);
+                    cache.TryRemove(request.ResourceId, out Lazy<T> oldValue);
                     return Task.FromResult<AddOrUpdateResponse>(new(true, null));
                 }
                 finally
