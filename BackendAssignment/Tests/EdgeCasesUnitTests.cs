@@ -12,9 +12,6 @@ public class EdgeCasesUnitTests
     public async Task AddOrUpdate_Works()
     {
         var timeProvider = new ManualTimeProvider { UtcNow = DateTime.UnixEpoch };
-
-        var resourceCallCounter = 0;
-
         var resourceProvider = new InjectedResourceProvider<int>(_ => 1, (_, _) => { });
 
         var throttleSettings = DefaultThrottleSettings;
